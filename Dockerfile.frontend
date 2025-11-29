@@ -1,0 +1,15 @@
+# Dockerfile para Frontend (HTML/CSS/JS) com Nginx
+FROM nginx:alpine
+
+# Remover a configuração do Nginx padrão
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copiar os arquivos do frontend para o diretorio padrao do Nginx
+COPY uday-app/frontend /usr/share/nginx/html/
+
+# Expor a porta 8- usada pelo Nginx
+EXPOSE 80
+
+# Entrypoint
+CMD [ "nginx", "-g", "daemon off;"]
+

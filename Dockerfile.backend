@@ -1,0 +1,29 @@
+# Dockerfile para o Backend (FastAPI)
+FROM python:3.11-slim
+
+# Definir um diretorio de trabalho
+WORKDIR /app
+
+# Instalação das dependencias do sistema
+RUN apt-get update && apt-get install -y \
+   gcc \
+   postgresql-client \
+   && rm -rf /var/lib/apt/lists/*
+
+# Copiar o arquivo de requisitos
+COPY uday-app/requirements.txt .
+
+# Instalando as dependencias do sistema
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o codigo da aplicação
+COPY uday-app/ .
+
+# Criar o diretorio de uploads
+RUN mkdir -p app/uploads
+
+# Expoe a porta da aplicação
+EXPOSE 8000
+
+# Comando para iniciar a nossa aplicação
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

@@ -35,6 +35,10 @@ app.include_router(companies.router, prefix="/companies", tags=["companies"])
 async def root():
     return {"message": "Bem-vindo à API Enterprise!"}
 
+@app.get("/health")
+async def root():
+    return {"status": "OK"}
+
 # Esperar o banco de dados estar pronto
 print("Waiting for database to be ready...")
 wait_for_db()

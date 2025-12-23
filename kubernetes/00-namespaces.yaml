@@ -1,0 +1,7 @@
+# Namespace para isolar os recursos da aplicação
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: uday-app
+  labels:
+    enviroment: development

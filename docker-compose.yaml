@@ -5,6 +5,7 @@ services:
       - POSTGRES_USER=user 
       - POSTGRES_PASSWORD=senha123
       - POSTGRES_DB=appdb
+    container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -15,10 +16,23 @@ services:
       timeout: 5s
       retries: 5
   
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: migration
+    entrypoint: sh -c "alembic upgrade head && exit 0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:senha123@postgres:5432/appdb
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
+    container_name: backend
     ports:
       - "8000:8000"
     volumes:
@@ -36,12 +50,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+    container_name: frontend
     ports:
       - "80:80"
     volumes:
       - dados_html:/usr/share/nginx/html
     depends_on:
       - backend
+    environment:
+      - BACKEND_HOST=backend
 
 volumes:
   postgres_data:

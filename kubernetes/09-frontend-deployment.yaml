@@ -1,0 +1,96 @@
+# Service para Frontend (ClusterIP para acesso interno)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: uday-app
+  labels:
+    app: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: frontend
+
+---
+# Deployment para Frontend (Nginx)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: uday-app
+  labels:
+    app: frontend
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      app: frontend
+  
+  # Estratégia de atualização
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v1
+    spec:
+      # Service Account com acesso ao registry privado
+      serviceAccountName: deployer-sa
+      
+      containers:
+      - name: frontend
+        image: registry.uday.corp:5000/uday-app/uday-frontend:v2
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        
+        # Variável de ambiente para o host do backend
+        env:
+        - name: BACKEND_HOST
+          value: "backend-service.uday-app.svc.cluster.local"
+        
+        # Resources
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        
+        # Liveness Probe
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        # Readiness Probe
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      
+      restartPolicy: Always

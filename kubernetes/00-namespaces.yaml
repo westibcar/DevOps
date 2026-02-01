@@ -5,3 +5,4 @@ metadata:
   name: uday-app
   labels:
     enviroment: development
+    istio-injection: enabled

@@ -1,0 +1,55 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: uday-virtualservice
+  namespace: uday-app
+spec:
+  hosts:
+  - "site.uday.corp"
+  gateways:
+  - istio-system/uday-gateway
+  http:
+  - name: backend-api-docs
+    match:
+    - uri:
+        prefix: /docs
+    - uri:
+        prefix: /redoc
+    - uri:
+        prefix: /openapi.json
+    route:
+    - destination:
+        host: backend-service
+        port:
+          number: 8000
+    timeout: 10s
+
+  - name: backend-auth-companies-users
+    match:
+    - uri:
+        prefix: /auth
+    - uri:
+        prefix: /companies
+    - uri:
+        prefix: /users
+    route:
+    - destination:
+        host: backend-service
+        port:
+          number: 8000
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+      retryOn: gateway-error,connect-failure,refused-stream
+    timeout: 10s
+
+  - name: frontend
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: frontend-service
+        port:
+          number: 80
+    timeout: 10s

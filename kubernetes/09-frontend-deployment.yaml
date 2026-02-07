@@ -49,8 +49,8 @@ spec:
       
       containers:
       - name: frontend
-        image: registry.uday.corp:5000/uday-app/uday-frontend:v2
-        imagePullPolicy: IfNotPresent
+        image: registry.uday.corp:5000/uday-app/uday-frontend:v5
+        imagePullPolicy: Always
         
         ports:
         - containerPort: 80

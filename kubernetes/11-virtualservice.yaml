@@ -9,21 +9,6 @@ spec:
   gateways:
   - istio-system/uday-gateway
   http:
-  - name: backend-api-docs
-    match:
-    - uri:
-        prefix: /docs
-    - uri:
-        prefix: /redoc
-    - uri:
-        prefix: /openapi.json
-    route:
-    - destination:
-        host: backend-service
-        port:
-          number: 8000
-    timeout: 10s
-
   - name: backend-auth-companies-users
     match:
     - uri:

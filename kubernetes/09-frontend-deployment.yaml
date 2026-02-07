@@ -49,7 +49,7 @@ spec:
       
       containers:
       - name: frontend
-        image: registry.uday.corp:5000/uday-app/uday-frontend:v5
+        image: registry.uday.corp:5000/uday-app/uday-frontend:v2
         imagePullPolicy: Always
         
         ports:

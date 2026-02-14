@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.backend.name }}
+  namespace: {{ include "uday-app.namespace" . }}
+  labels:
+    app: backend
+data:
+  JWT_ALGORITHM: {{ .Values.configmap.backend.data.JWT_ALGORITHM | quote }}
+  JWT_EXPIRATION_TIME: {{ .Values.configmap.backend.data.JWT_EXPIRATION_TIME | quote }}
+  APP_NAME: {{ .Values.configmap.backend.data.APP_NAME | quote }}
+  APP_VERSION: {{ .Values.configmap.backend.data.APP_VERSION | quote }}
+  ENVIRONMENT: {{ .Values.configmap.backend.data.ENVIRONMENT | quote }}
+  LOG_LEVEL: {{ .Values.configmap.backend.data.LOG_LEVEL | quote }}

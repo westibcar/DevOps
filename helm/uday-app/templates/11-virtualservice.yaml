@@ -7,7 +7,7 @@ spec:
   hosts:
   - {{ .Values.virtualService.host | quote }}
   gateways:
-  - {{ printf "%s/%s" .Values.istio.gatewayNamespace .Values.istioGateway.name }}
+  - istio-system/uday-gateway
   http:
   - name: backend-api-docs
     match:
@@ -17,10 +17,11 @@ spec:
         prefix: /openapi.json
     route:
     - destination:
-        host: {{ .Values.backend.service.name }}
+        host: backend-service
         port:
-          number: {{ .Values.backend.service.port }}
+          number: 8000
     timeout: 10s
+
   - name: backend-auth-companies-users
     match:
     - uri:
@@ -39,6 +40,7 @@ spec:
       perTryTimeout: 2s
       retryOn: gateway-error,connect-failure,refused-stream
     timeout: 10s
+
   - name: frontend
     match:
     - uri:

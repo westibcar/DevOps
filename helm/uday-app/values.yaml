@@ -89,9 +89,6 @@ frontend:
       memory: "64Mi"
       cpu: "100m"
 
-istio:
-  gatewayNamespace: istio-system
-
 istioGateway:
   name: uday-gateway
   host: site.uday.corp

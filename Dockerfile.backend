@@ -1,4 +1,5 @@
 # Dockerfile para o Backend (FastAPI)
+# CI/CD: Build automatizado via GitHub Actions
 FROM python:3.11-slim
 
 # Definir um diretorio de trabalho

@@ -36,8 +36,8 @@ async def root():
     return {"message": "Bem-vindo à API Enterprise!"}
 
 @app.get("/health")
-async def root():
-    return {"status": "OK"}
+async def health_check():
+    return {"status": "OK", "version": "1.1.0"}
 
 # Esperar o banco de dados estar pronto
 print("Waiting for database to be ready...")

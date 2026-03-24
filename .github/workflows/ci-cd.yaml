@@ -52,4 +52,4 @@ jobs:
       frontend_image: ${{ needs.ci.outputs.frontend_image }}
       image_tag: ${{ needs.ci.outputs.image_tag }}
     secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GH_PAT }}

@@ -104,5 +104,31 @@ jobs:
 
             git push
             echo "Helm values.yaml atualizado e enviado ao repositório."
-            echo "ArgoCD irá detectar a mudança e realizar o deploy automaticamente."
           fi
+
+      # =====================================================================
+      # Garantir que a Application do ArgoCD existe
+      # Se não existir, cria automaticamente a partir do manifest no repo
+      # Se já existir, o apply é idempotente (não faz nada)
+      # =====================================================================
+      - name: Garantir Application no ArgoCD
+        run: |
+          export PATH="/home/runner/bin:$PATH"
+
+          echo "========================================="
+          echo "Verificando Application no ArgoCD..."
+          echo "========================================="
+
+          if kubectl get application uday-app -n argocd >/dev/null 2>&1; then
+            echo "✔ Application 'uday-app' já existe no ArgoCD."
+          else
+            echo "Application 'uday-app' não encontrada. Criando..."
+            kubectl apply -f argocd/application.yaml
+            echo "✔ Application 'uday-app' criada no ArgoCD."
+          fi
+
+          echo ""
+          echo "Status da Application:"
+          kubectl get application uday-app -n argocd -o wide
+          echo "========================================="
+          echo "ArgoCD irá detectar a mudança e realizar o deploy automaticamente."

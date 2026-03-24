@@ -70,6 +70,32 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ---
 # =============================================================================
+# ClusterRole para o runner gerenciar Applications no ArgoCD
+# Permite criar/atualizar a Application caso ela não exista
+# =============================================================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: github-runner-argocd
+rules:
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: github-runner-argocd-binding
+subjects:
+  - kind: ServiceAccount
+    name: github-runner-sa
+    namespace: github-runner
+roleRef:
+  kind: ClusterRole
+  name: github-runner-argocd
+  apiGroup: rbac.authorization.k8s.io
+---
+# =============================================================================
 # Deployment do GitHub Actions Runner com Docker-in-Docker (DinD)
 # =============================================================================
 # Usa dois containers:
@@ -154,6 +180,19 @@ spec:
               echo "  Repo:  ${GITHUB_REPOSITORY}"
               echo "  Nome:  ${RUNNER_NAME}"
               echo "========================================="
+
+              # Instalar kubectl para o CD poder gerenciar ArgoCD Applications
+              echo "Instalando kubectl..."
+              KUBECTL_VERSION=$(curl -sL https://dl.k8s.io/release/stable.txt)
+              curl -sLO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+              chmod +x kubectl
+              # Instalar no diretório do runner (acessível pelo PATH dos jobs)
+              mkdir -p /home/runner/bin
+              mv kubectl /home/runner/bin/kubectl
+              export PATH="/home/runner/bin:$PATH"
+              # Adicionar ao PATH dos jobs do GitHub Actions
+              echo "PATH=/home/runner/bin:$PATH" >> /home/runner/.env 2>/dev/null || true
+              echo "kubectl instalado: $(kubectl version --client 2>&1 | head -1)"
 
               # Aguardar DinD estar pronto (certs TLS)
               echo "Aguardando DinD gerar certificados TLS..."

@@ -1,5 +1,5 @@
 # Dockerfile para o Backend (FastAPI)
-# CI/CD Pipeline v2
+# CI/CD Pipeline v3 - Teste E2E completo
 FROM python:3.11-slim
 
 # Definir um diretorio de trabalho

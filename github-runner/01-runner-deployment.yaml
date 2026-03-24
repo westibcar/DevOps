@@ -128,6 +128,21 @@ spec:
                 secretKeyRef:
                   name: github-runner-secret
                   key: GITHUB_PAT
+            - name: REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: github-runner-secret
+                  key: REGISTRY_URL
+            - name: REGISTRY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: github-runner-secret
+                  key: REGISTRY_USER
+            - name: REGISTRY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: github-runner-secret
+                  key: REGISTRY_PASSWORD
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -149,6 +164,17 @@ spec:
                 fi
                 echo "  Tentativa $i/30 - aguardando..."
                 sleep 2
+              done
+
+              # Login no Docker Registry privado
+              echo "Autenticando no registry ${REGISTRY_URL}..."
+              for i in $(seq 1 10); do
+                if docker login "${REGISTRY_URL}" -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" 2>/dev/null; then
+                  echo "Login no registry realizado com sucesso."
+                  break
+                fi
+                echo "  Tentativa $i/10 - Docker daemon ainda não disponível..."
+                sleep 3
               done
 
               # Registrar o runner no GitHub

@@ -1,5 +1,5 @@
 # Dockerfile para Frontend (HTML/CSS/JS) com Nginx
-# CI/CD: Build automatizado via GitHub Actions
+# CI/CD: Build automatizado via GitHub Actions + Registry Auth
 FROM nginx:alpine
 
 COPY uday-app/frontend /usr/share/nginx/html

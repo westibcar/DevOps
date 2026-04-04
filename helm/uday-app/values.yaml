@@ -58,10 +58,10 @@ postgres:
 
 migrationsJob:
   name: backend-migrations
-  image: registry.uday.corp:5000/uday-app/uday-backend:271eef7
+  image: registry.uday.corp:5000/uday-app/uday-backend:d2cc0c5
 
 backend:
-  image: registry.uday.corp:5000/uday-app/uday-backend:271eef7
+  image: registry.uday.corp:5000/uday-app/uday-backend:d2cc0c5
   service:
     name: backend-service
     port: 8000

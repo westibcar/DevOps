@@ -38,7 +38,7 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "OK",
-            "version": "1.0.0"}
+            "version": "1.1.0"}
 
 # Esperar o banco de dados estar pronto
 print("Waiting for database to be ready...")

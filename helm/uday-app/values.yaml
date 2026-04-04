@@ -75,7 +75,7 @@ backend:
       memory: "256Mi"
 
 frontend:
-  image: registry.uday.corp:5000/uday-app/uday-frontend:b5ec23a
+  image: registry.uday.corp:5000/uday-app/uday-frontend:9bce9a4
   service:
     name: frontend-service
     port: 80

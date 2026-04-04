@@ -65,14 +65,14 @@ backend:
   service:
     name: backend-service
     port: 8000
-  replicas: 1
+  replicas: 2
   resources:
     requests:
       cpu: "100m"
       memory: "128Mi"
     limits:
-      cpu: "250m"
-      memory: "256Mi"
+      cpu: "100m"
+      memory: "128Mi"
 
 frontend:
   image: registry.uday.corp:5000/uday-app/uday-frontend:9bce9a4

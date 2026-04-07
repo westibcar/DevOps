@@ -53,3 +53,4 @@ jobs:
       image_tag: ${{ needs.ci.outputs.image_tag }}
     secrets:
       token: ${{ secrets.GH_PAT }}
+      

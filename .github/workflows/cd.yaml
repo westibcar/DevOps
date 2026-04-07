@@ -132,3 +132,4 @@ jobs:
           kubectl get application uday-app -n argocd -o wide
           echo "========================================="
           echo "ArgoCD irá detectar a mudança e realizar o deploy automaticamente."
+          

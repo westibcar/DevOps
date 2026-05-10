@@ -1,0 +1,102 @@
+# Service para Backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: uday-app
+  labels:
+    app: backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: backend
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: uday-app
+spec:
+  replicas: 2
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # Sobe um pod novo antes de derrubar o antigo
+      maxUnavailable: 0    # Nunca fica sem backend disponível
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: deployer-sa
+      terminationGracePeriodSeconds: 30
+
+      containers:
+      - name: backend
+        image: registry.uday.corp:5000/uday-app/uday-backend:v3
+
+        ports:
+        - containerPort: 8000
+
+        envFrom:
+        - configMapRef:
+            name: backend-config
+
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: SECRET_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATABASE_URL
+
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Iniciando FastAPI..."
+          exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "sleep 10"]
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+

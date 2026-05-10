@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backend-migrations
+  namespace: uday-app
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: migrations
+        image: registry.uday.corp:5000/uday-app/uday-backend:v1
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Aguardando PostgreSQL..."
+          while ! nc -z postgres-service 5432; do sleep 2; done
+          alembic upgrade head
+        envFrom:
+        - configMapRef:
+            name: backend-config
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATABASE_URL

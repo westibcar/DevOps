@@ -137,8 +137,17 @@ A aplicação estará disponível em:
 ### Deploy com Kubernetes (Helm)
 
 ```bash
+# Criar o namespace e um Secret Docker com credenciais válidas de pull do registry.
+# Não grave usuário/senha em arquivos versionados.
+kubectl create namespace uday-app --dry-run=client -o yaml | kubectl apply -f -
+kubectl create secret docker-registry registry-pull-secret \
+  -n uday-app \
+  --docker-server=registry.uday.corp:5000 \
+  --docker-username='<usuario-do-registry>' \
+  --docker-password='<senha-do-registry>'
+
 # Instalar via Helm Chart
-helm install uday-app helm/uday-app -n uday-app --create-namespace
+helm install uday-app helm/uday-app -n uday-app
 
 # Verificar os pods
 kubectl get pods -n uday-app

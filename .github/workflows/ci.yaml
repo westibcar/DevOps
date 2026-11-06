@@ -18,6 +18,11 @@ on:
         description: "Caminho do values.yaml do Helm"
         required: true
         type: string
+      force_build:
+        description: "Força build das imagens do backend e frontend"
+        required: false
+        type: boolean
+        default: false
     outputs:
       backend:
         description: "Se o backend foi alterado (true/false)"
@@ -85,6 +90,7 @@ jobs:
           FRONTEND=false
           HELM_CHANGED=false
           APP_CHANGED=false
+          FORCE_BUILD="${{ inputs.force_build }}"
 
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
@@ -126,6 +132,13 @@ jobs:
                 ;;
             esac
           done <<< "$CHANGED_FILES"
+
+          if [[ "$FORCE_BUILD" == "true" ]]; then
+            BACKEND=true
+            FRONTEND=true
+            APP_CHANGED=true
+            echo "Build forçado para backend e frontend."
+          fi
 
           if [[ "$HELM_CHANGED" == "true" ]] && [[ "$APP_CHANGED" == "false" ]]; then
             HELM_ONLY=true

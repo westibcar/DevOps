@@ -22,6 +22,13 @@ on:
       - 'entrypoint.sh'
       - 'nginx.conf'
       - 'helm/uday-app/**'
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: "Forçar build das imagens do backend e frontend"
+        required: true
+        type: boolean
+        default: true
 
 jobs:
 # =============================================================================
@@ -32,6 +39,7 @@ jobs:
     uses: ./.github/workflows/ci.yaml
     with:
       values_file: helm/uday-app/values.yaml
+      force_build: ${{ inputs.force_build || false }}
 
 # =============================================================================
 # Etapa 2: CD - Atualizar Helm e deploy via ArgoCD

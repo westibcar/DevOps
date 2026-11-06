@@ -97,8 +97,23 @@ jobs:
           Frontend alterado: ${{ inputs.frontend_changed }}
           Tag: ${{ inputs.image_tag }}"
 
-            git push
-            echo "Helm values.yaml atualizado e enviado ao repositório."
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase FETCH_HEAD
+
+              if git push origin HEAD:main; then
+                echo "Helm values.yaml atualizado e enviado ao repositório."
+                break
+              fi
+
+              if [ "$attempt" -eq 5 ]; then
+                echo "ERRO: Não foi possível enviar as tags após 5 tentativas."
+                exit 1
+              fi
+
+              echo "A branch main mudou durante o push; tentando novamente ($attempt/5)..."
+              sleep 2
+            done
           fi
 
       # =====================================================================

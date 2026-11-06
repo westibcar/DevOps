@@ -46,6 +46,8 @@ spec:
     spec:
       # Service Account com acesso ao registry privado
       serviceAccountName: {{ .Values.serviceAccount.name }}
+      imagePullSecrets:
+      - name: {{ default "nexus-registry-secret" .Values.registry.existingSecret }}
       
       containers:
       - name: frontend

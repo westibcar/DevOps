@@ -1,13 +1,16 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.migrationsJob.name }}
+  name: {{ .Values.migrationsJob.name }}-{{ .Values.migrationsJob.image | sha256sum | trunc 8 }}
   namespace: {{ include "uday-app.namespace" . }}
 spec:
   backoffLimit: 3
   template:
     spec:
       restartPolicy: OnFailure
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      imagePullSecrets:
+      - name: {{ default "nexus-registry-secret" .Values.registry.existingSecret }}
       containers:
       - name: migrations
         image: {{ .Values.migrationsJob.image }}

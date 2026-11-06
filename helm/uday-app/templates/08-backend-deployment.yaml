@@ -37,6 +37,8 @@ spec:
         app: backend
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
+      imagePullSecrets:
+      - name: {{ default "nexus-registry-secret" .Values.registry.existingSecret }}
       terminationGracePeriodSeconds: 30
       containers:
       - name: backend

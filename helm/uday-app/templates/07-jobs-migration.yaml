@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.migrationsJob.name }}-{{ .Values.migrationsJob.image | sha256sum | trunc 8 }}
+  name: {{ .Values.migrationsJob.name }}-{{ printf "%s|%d" .Values.migrationsJob.image (.Values.migrationsJob.templateRevision | int) | sha256sum | trunc 8 }}
   namespace: {{ include "uday-app.namespace" . }}
 spec:
   backoffLimit: 3
@@ -30,3 +30,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.secrets.backend.name }}
               key: DATABASE_URL
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.backend.name }}
+              key: SECRET_KEY

@@ -58,6 +58,7 @@ postgres:
 
 migrationsJob:
   name: backend-migrations
+  templateRevision: 2
   image: registry.uday.corp:5000/uday-app/uday-backend:723b34d
 
 backend:

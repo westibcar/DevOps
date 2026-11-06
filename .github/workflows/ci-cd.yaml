@@ -40,8 +40,6 @@ jobs:
   cd:
     name: "CD - Continuous Delivery"
     needs: ci
-    permissions:
-      contents: write
     if: |
       needs.ci.outputs.helm_only != 'true' &&
       (needs.ci.outputs.backend == 'true' || needs.ci.outputs.frontend == 'true')
@@ -53,4 +51,6 @@ jobs:
       backend_image: ${{ needs.ci.outputs.backend_image }}
       frontend_image: ${{ needs.ci.outputs.frontend_image }}
       image_tag: ${{ needs.ci.outputs.image_tag }}
+    secrets:
+      token: ${{ secrets.GH_PAT }}
       
